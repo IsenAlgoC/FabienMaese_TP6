@@ -80,7 +80,7 @@ void supprimer_un_contact_dans_rep(Repertoire *rep, int indice) {
 	{						/* et que l'indice pointe a l'interieur */
 		if (indice <= rep->nb_elts || indice>0) {
 
-			for (int i = indice; i < rep->nb_elts; i++) {
+			for (int i = indice+1; i < rep->nb_elts; i++) {
 
 				rep->tab[i-1] = rep->tab[i];			//on part du principe que les indices commencent à 1 : tab[0], le 1er contact, est à l'indice 1
 			}
@@ -189,17 +189,19 @@ void trier(Repertoire *rep)
 	// ajouter code ici pour tableau
 	
 
-	//tri à bulles
-	for (int i = 0; i < rep->nb_elts; i++) {
-		for (int j = 0; j < rep->nb_elts; j++) {
-			if (est_sup(rep->tab[i], rep->tab[j]) == false) {
-				Enregistrement temp = rep->tab[i];
-				rep->tab[i] = rep->tab[j];
-				rep->tab[j] = temp;
-			}
+	
+	if (rep->est_trie == false) {
+		//tri à bulles
+		for (int i = 0; i < rep->nb_elts; i++) {
+			for (int j = 0; j < rep->nb_elts; j++) {
+				if (est_sup(rep->tab[i], rep->tab[j]) == false) {
+					Enregistrement temp = rep->tab[i];
+					rep->tab[i] = rep->tab[j];
+					rep->tab[j] = temp;
+				}
+			} 
 		}
 	}
-
 
 	
 #else
@@ -231,10 +233,20 @@ int rechercher_nom(Repertoire *rep, char nom[], int ind)
 	char tmp_nom2[MAX_NOM];	/* on place la chaine recherchee et la chaine lue dans le */
 							/* tableau, afin de les convertir en majuscules et les comparer */
 	bool trouve = false;		
+	
 
-
-#ifdef IMPL_TAB
+#ifdef IMPL_TAB           
 							// ajouter code ici pour tableau
+	for (int j = 0; j < rep->nb_elts; j++) {
+		int ret = strcmp(rep->tab[j].nom, nom);
+
+		if (ret == 0){
+			trouve = true;
+			i = j;
+		}
+	}
+
+							
 	
 #else
 #ifdef IMPL_LIST
@@ -251,7 +263,16 @@ int rechercher_nom(Repertoire *rep, char nom[], int ind)
   /*********************************************************************/
 void compact(char *s)
 {
-	// compléter code ici
+	// compléter code ici s[i] < 30 ou s[i]> 39
+
+	for (int i = 0; i < strlen(s); i++) {
+		if ((s[i] < 30) || (s[i] > 39)) {
+			for (int j=i; j < strlen(s); j++) {
+				s[j - 1] = s[i];			
+			}
+
+		}
+	}
 
 	return;
 }
