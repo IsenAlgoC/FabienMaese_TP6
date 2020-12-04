@@ -10,7 +10,7 @@
 #define SQUELET
 /**************************************************************************/
 /* Compléter votre nom ici                                                */
-/*   Nom :                         Prénom :                               */
+/*   Nom : Maëse                 Prénom : Fabien                          */
 /**************************************************************************/
 
 extern bool modif;
@@ -20,7 +20,7 @@ extern bool modif;
 /*  Ajout d'un contact dans le répertoire stocké en mémoire           */
 /**********************************************************************/
 
-int ajouter_un_contact_dans_rep(Repertoire *rep, Enregistrement enr)
+int ajouter_un_contact_dans_rep(Repertoire* rep, Enregistrement enr)
 {
 #ifdef IMPL_TAB
 	// compléter code ici pour tableau
@@ -28,7 +28,8 @@ int ajouter_un_contact_dans_rep(Repertoire *rep, Enregistrement enr)
 
 	if (rep->nb_elts < MAX_ENREG)
 	{
-		
+		rep->tab[rep->nb_elts] = enr;
+		rep->nb_elts = rep->nb_elts + 1;
 
 	}
 	else {
@@ -77,11 +78,14 @@ void supprimer_un_contact_dans_rep(Repertoire *rep, int indice) {
 	// compléter code ici pour tableau
 	if (rep->nb_elts >= 1)		/* s'il y a au moins un element ds le tableau */
 	{						/* et que l'indice pointe a l'interieur */
-		
+		if (indice <= rep->nb_elts || indice>0) {
 
+			for (int i = indice; i < rep->nb_elts; i++) {
 
-
-
+				rep->tab[i-1] = rep->tab[i];			//on part du principe que les indices commencent à 1 : tab[0], le 1er contact, est à l'indice 1
+			}
+			
+		}
 
 		rep->nb_elts -= 1;		/* ds ts les cas, il y a un element en moins */
 		modif = true;
@@ -118,7 +122,7 @@ void supprimer_un_contact_dans_rep(Repertoire *rep, int indice) {
   /**********************************************************************/
 void affichage_enreg(Enregistrement enr)
 {
-	// code à compléter ici
+	printf("\n%s,	%s			%s", enr.nom, enr.prenom, enr.tel);
 
 
 } /* fin affichage_enreg */
@@ -143,10 +147,35 @@ void affichage_enreg_frmt(Enregistrement enr)
 bool est_sup(Enregistrement enr1, Enregistrement enr2)
 {
 	// code à compléter ici
+
+	//les 2 variables qui serviront à comparer les noms et les prénoms 
+	int ret1 = strcmp(enr1.nom, enr2.nom);
+	int ret2 = strcmp(enr1.prenom, enr2.prenom); 
 	
 
-	return(false);
 
+	if (ret1 == 0) {	//si les noms sont égaux
+
+		if (ret2 < 0) {
+			return(false);
+		}
+		else if (ret2 > 0) {
+			return(true);
+		}
+		else {
+			return(true); //choix arbitraire, si les deux personnes ont le même nom et prénom, l'ordre importe peu
+		}
+
+	}
+
+	if (ret1 > 0) {
+		return(true);
+	}
+	
+	else{
+
+		return(false);
+	}
 }
  
 /*********************************************************************/
@@ -159,6 +188,17 @@ void trier(Repertoire *rep)
 #ifdef IMPL_TAB
 	// ajouter code ici pour tableau
 	
+
+	//tri à bulles
+	for (int i = 0; i < rep->nb_elts; i++) {
+		for (int j = 0; j < rep->nb_elts; j++) {
+			if (est_sup(rep->tab[i], rep->tab[j]) == false) {
+				Enregistrement temp = rep->tab[i];
+				rep->tab[i] = rep->tab[j];
+				rep->tab[j] = temp;
+			}
+		}
+	}
 
 
 	
@@ -207,7 +247,7 @@ int rechercher_nom(Repertoire *rep, char nom[], int ind)
 } /* fin rechercher_nom */
 
   /*********************************************************************/
-  /* Supprimer tous les caracteres non numériques de la chaines        */
+  /* Supprimer tous les caracteres non numériques de la chaine        */
   /*********************************************************************/
 void compact(char *s)
 {

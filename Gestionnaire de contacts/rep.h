@@ -38,6 +38,7 @@ MAX_SAISIE > MAX_TEL */
 /* le nombre de contacts                                         */
 /* le tableau de contacts,                                       */
 /* est_trie : qui vaut VRAI si le tableau est trié et FAUX sinon */
+
 typedef struct rept
 {
 	int nb_elts;
@@ -50,6 +51,7 @@ typedef struct rept
 #endif
 	bool est_trie;
 } Repertoire;
+
 
 // initialise le répertoire passé en paramètre et fait appel à charger() pour charger le fichier de contacts
 int init_rep(Repertoire *rep);
