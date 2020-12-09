@@ -79,12 +79,22 @@ int InsertElementAt(LinkedList *Liste, int i, Enregistrement pers) {
 		if (Liste->size == 0) { // insertion en tête de l'unique élément
 			NewElement = NewLinkedListElement(pers);
 			if (NewElement != NULL) {
-			//
-			//
-			//   insertion code ici
-			//
-			//
-			//
+
+				if (i >= 1) {
+					SingleLinkedListElem* ElementPrec = GetElementAt(Liste, i - 1);
+					SingleLinkedListElem* ElementSuiv = GetElementAt(Liste, i + 1);
+					ElementPrec->next = NewElement;
+					NewElement->next = ElementSuiv;
+				}
+
+				if (i == 0) {
+					// si l'insertion est en tête
+					// le nouvel élément devient la tête et on insère la tête en 2e position 
+					InsertElementAt(Liste, 1, Liste->head->pers);
+					Liste->head = NewElement;
+				}
+				
+				Liste->size++;
 		}
 			else {
 				return(0);
@@ -93,12 +103,11 @@ int InsertElementAt(LinkedList *Liste, int i, Enregistrement pers) {
 		if (Liste->size <= i) { // insertion en queue
 			NewElement = NewLinkedListElement(pers);
 			if (NewElement != NULL) {
-			//
-			//
-			//   insertion code ici
-			//
-			//
-			//
+
+				SingleLinkedListElem* Queue = GetElementAt(Liste, Liste->size);
+				Queue->next = NewElement;
+				Liste->tail = NewElement;
+		
 			}
 			else {
 				return(0);
@@ -118,12 +127,20 @@ int DeleteLinkedListElem(LinkedList * list, SingleLinkedListElem * item) {
 	if ((list->head == list->tail) && (list->size != 1)) return(0); // anomalie
 	if ((list->size == 0) || (item == NULL)) return(0); // pas d'élément dans la liste ou item invalide
 
-	//
-	//
-	// compléter code ici
-	//
-	//
+	else {
 
+		for (int i = 0; i < list->size; i++) {
+			SingleLinkedListElem* Current = GetElementAt(list, i);
+			if (item == Current) {
+				SingleLinkedListElem* ElementPrec = GetElementAt(list, i - 1);
+				SingleLinkedListElem* ElementSuiv = GetElementAt(list, i + 1);
+				ElementPrec->next = ElementSuiv;
+			}
+		}
+		
+		list->size--;
+		return(1);
+	}
 
 	return(0);  // pas trouvé
 }

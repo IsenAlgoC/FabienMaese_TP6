@@ -51,14 +51,16 @@ int ajouter_un_contact_dans_rep(Repertoire* rep, Enregistrement enr)
 
 	}
 	else {
-			//
-			// compléter code ici pour Liste
-			//
-			//
-			//
+		if (rep->nb_elts < MAX_ENREG) {
+			int ret = insertLinkedListElem(rep->liste, elem);
+			if (ret == 1) {
+				rep->liste->size += 1;
+			}
+
+		}
 
 	}
-
+	
 
 #endif
 	
@@ -263,10 +265,10 @@ int rechercher_nom(Repertoire *rep, char nom[], int ind)
   /*********************************************************************/
 void compact(char *s)
 {
-	// compléter code ici s[i] < 30 ou s[i]> 39
+	// compléter code 
 
 	for (int i = 0; i < strlen(s); i++) {
-		if ((s[i] < 30) || (s[i] > 39)) {
+		if ((s[i] < 48) || (s[i] > 57)) {
 			for (int j=i; j < strlen(s); j++) {
 				s[j - 1] = s[i];			
 			}
