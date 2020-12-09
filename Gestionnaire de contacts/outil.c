@@ -23,7 +23,7 @@ extern bool modif;
 int ajouter_un_contact_dans_rep(Repertoire* rep, Enregistrement enr)
 {
 #ifdef IMPL_TAB
-	// compléter code ici pour tableau
+	
 	int idx;
 
 	if (rep->nb_elts < MAX_ENREG)
@@ -52,7 +52,7 @@ int ajouter_un_contact_dans_rep(Repertoire* rep, Enregistrement enr)
 	}
 	else {
 		if (rep->nb_elts < MAX_ENREG) {
-			int ret = insertLinkedListElem(rep->liste, elem);
+			int ret = InsertElementAt(rep, rep->nb_elts+1, enr);
 			if (ret == 1) {
 				rep->liste->size += 1;
 			}
@@ -77,7 +77,7 @@ int ajouter_un_contact_dans_rep(Repertoire* rep, Enregistrement enr)
 #ifdef IMPL_TAB
 void supprimer_un_contact_dans_rep(Repertoire *rep, int indice) {
 
-	// compléter code ici pour tableau
+	
 	if (rep->nb_elts >= 1)		/* s'il y a au moins un element ds le tableau */
 	{						/* et que l'indice pointe a l'interieur */
 		if (indice <= rep->nb_elts || indice>0) {
@@ -89,7 +89,7 @@ void supprimer_un_contact_dans_rep(Repertoire *rep, int indice) {
 			
 		}
 
-		rep->nb_elts -= 1;		/* ds ts les cas, il y a un element en moins */
+		rep->nb_elts -= 1;		/* dans tous les cas, il y a un element en moins */
 		modif = true;
 	}
 
@@ -135,6 +135,8 @@ void affichage_enreg(Enregistrement enr)
   /**********************************************************************/
 void affichage_enreg_frmt(Enregistrement enr)
 {
+
+	printf("\n%s,	%s			%s", enr.nom, enr.prenom, enr.tel);
 	// code à compléter ici
 	// comme fonction affichage_enreg, mais avec présentation alignées des infos
 	
@@ -148,7 +150,7 @@ void affichage_enreg_frmt(Enregistrement enr)
   /**********************************************************************/
 bool est_sup(Enregistrement enr1, Enregistrement enr2)
 {
-	// code à compléter ici
+	
 
 	//les 2 variables qui serviront à comparer les noms et les prénoms 
 	int ret1 = strcmp(enr1.nom, enr2.nom);
@@ -239,7 +241,7 @@ int rechercher_nom(Repertoire *rep, char nom[], int ind)
 
 #ifdef IMPL_TAB           
 							// ajouter code ici pour tableau
-	for (int j = 0; j < rep->nb_elts; j++) {
+	for (int j = i; j < rep->nb_elts; j++) {
 		int ret = strcmp(rep->tab[j].nom, nom);
 
 		if (ret == 0){
