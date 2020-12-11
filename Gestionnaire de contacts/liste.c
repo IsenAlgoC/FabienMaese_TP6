@@ -79,23 +79,11 @@ int InsertElementAt(LinkedList *Liste, int i, Enregistrement pers) {
 		if (Liste->size == 0) { // insertion en tête de l'unique élément
 			NewElement = NewLinkedListElement(pers);
 			if (NewElement != NULL) {
-
-				if (i >= 1) {
-					SingleLinkedListElem* ElementPrec = GetElementAt(Liste, i - 1);
-					SingleLinkedListElem* ElementSuiv = GetElementAt(Liste, i + 1);
-					ElementPrec->next = NewElement;
-					NewElement->next = ElementSuiv;
-				}
-
-				if (i == 0) {
-					// si l'insertion est en tête
-					// le nouvel élément devient la tête et on insère la tête en 2e position 
-					InsertElementAt(Liste, 1, Liste->head->pers);
-					Liste->head = NewElement;
-				}
-				
+				Liste->head = NewElement;
+				Liste->tail = NewElement;
 				Liste->size++;
-		}
+				return(1);
+			}		
 			else {
 				return(0);
 			}
@@ -120,7 +108,7 @@ int InsertElementAt(LinkedList *Liste, int i, Enregistrement pers) {
 //
 // Suppression d'un élément de la liste chaînée
 //
-// FONCTION A COMPLETER
+// 
 int DeleteLinkedListElem(LinkedList * list, SingleLinkedListElem * item) {
 	if (list == NULL) return(0); // La liste n'existe pas
 	if ((list->head == NULL) || (list->tail == NULL)) return(0); // liste vide ou anomalie
@@ -135,9 +123,12 @@ int DeleteLinkedListElem(LinkedList * list, SingleLinkedListElem * item) {
 				SingleLinkedListElem* ElementPrec = GetElementAt(list, i - 1);
 				SingleLinkedListElem* ElementSuiv = GetElementAt(list, i + 1);
 				ElementPrec->next = ElementSuiv;
+				
 			}
 		}
 		
+
+		free(item);
 		list->size--;
 		return(1);
 	}

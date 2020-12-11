@@ -28,7 +28,8 @@ int ajouter_un_contact_dans_rep(Repertoire* rep, Enregistrement enr)
 
 	if (rep->nb_elts < MAX_ENREG)
 	{
-		rep->tab[rep->nb_elts] = enr;
+		idx = rep->nb_elts;
+		rep->tab[idx] = enr;
 		rep->nb_elts = rep->nb_elts + 1;
 
 	}
@@ -42,6 +43,7 @@ int ajouter_un_contact_dans_rep(Repertoire* rep, Enregistrement enr)
 
 	bool inserted = false;
 	if (rep->nb_elts == 0) {
+		InsertElementAt(rep->liste, rep->liste->size, enr);
 		if (InsertElementAt(rep->liste, rep->liste->size, enr) != 0) {
 			rep->nb_elts += 1;
 			modif = true;
@@ -52,11 +54,21 @@ int ajouter_un_contact_dans_rep(Repertoire* rep, Enregistrement enr)
 	}
 	else {
 		if (rep->nb_elts < MAX_ENREG) {
-			int ret = InsertElementAt(rep, rep->nb_elts+1, enr);
+			int i = 0;
+			// on regarde à quel indice (i) l'élément qu'on veut ajouter n'est plus inférieur aux autres, pour le placer au bon endroit
+			for (int j = 0; j < rep->nb_elts; j++) {
+				SingleLinkedListElem* elem = GetElementAt(rep->liste, i);					
+				
+				while (est_sup(elem->pers, enr)) {
+					i++;
+				}
+			}
+			int ret = InsertElementAt(rep->liste, i, enr);
 			if (ret == 1) {
 				rep->liste->size += 1;
+				return(OK);
 			}
-
+			
 		}
 
 	}
@@ -151,11 +163,34 @@ void affichage_enreg_frmt(Enregistrement enr)
 bool est_sup(Enregistrement enr1, Enregistrement enr2)
 {
 	
+	unsigned int k = 0;
+
+	// on met tous les noms et prénoms en majuscules 
+
+	for(k=0; k<strlen(enr1.nom); k++){
+		toupper(enr1.nom[k]);
+		
+	}
+
+	for (k = 0; k < strlen(enr1.prenom); k++) {
+		toupper(enr1.nom[k]);
+		
+	}
+
+	for (k = 0; k < strlen(enr2.nom); k++) {
+		toupper(enr1.nom[k]);
+	
+	}
+
+	for (k = 0; k < strlen(enr2.prenom); k++) {
+		toupper(enr1.nom[k]);
+		
+	}
+
 
 	//les 2 variables qui serviront à comparer les noms et les prénoms 
 	int ret1 = strcmp(enr1.nom, enr2.nom);
 	int ret2 = strcmp(enr1.prenom, enr2.prenom); 
-	
 
 
 	if (ret1 == 0) {	//si les noms sont égaux
@@ -190,7 +225,7 @@ void trier(Repertoire *rep)
 {
 
 #ifdef IMPL_TAB
-	// ajouter code ici pour tableau
+	
 	
 
 	
@@ -228,34 +263,49 @@ void trier(Repertoire *rep)
   /*   un entier négatif si la recherche est négative				    */
   /**********************************************************************/
 
-int rechercher_nom(Repertoire *rep, char nom[], int ind)
+int rechercher_nom(Repertoire* rep, char nom[], int ind)
 {
 	int i = ind;		    /* position (indice) de début de recherche dans tableau/liste rep */
 	int ind_fin;			/* position (indice) de fin de tableau/liste rep */
-
 	char tmp_nom[MAX_NOM];	/* 2 variables temporaires dans lesquelles */
 	char tmp_nom2[MAX_NOM];	/* on place la chaine recherchee et la chaine lue dans le */
 							/* tableau, afin de les convertir en majuscules et les comparer */
-	bool trouve = false;		
-	
+	bool trouve = false;
+
+	ind_fin = rep->nb_elts - 1; // indice de fin à ne pas dépasser
+	strncpy_s(tmp_nom, _countof(tmp_nom), nom, _TRUNCATE);  //copie le contenu d'une chaîne de caractère dans une autre
+
+
 
 #ifdef IMPL_TAB           
-							// ajouter code ici pour tableau
-	for (int j = i; j < rep->nb_elts; j++) {
-		int ret = strcmp(rep->tab[j].nom, nom);
 
-		if (ret == 0){
+	while ((i <= ind_fin) && (!trouve))
+	{
+		strncpy_s(tmp_nom2, _countof(tmp_nom2), rep->tab[i].nom, _TRUNCATE);
+		compact(tmp_nom2);
+		if (strcmp(tmp_nom, tmp_nom2) == 0)
 			trouve = true;
-			i = j;
+		else
+		{
+			// si pas trouvé, on passe au suivant
+			i++;
 		}
-	}
+}
 
-							
-	
+
 #else
 #ifdef IMPL_LIST
 							// ajouter code ici pour Liste
-	
+	for(int k =0; k<= ind_fin;k++){
+		SingleLinkedListElem* elem= GetElementAt(rep->liste, k);
+		int ret = strcmp(elem->pers.nom, nom);
+		if (ret == 0) {
+			trouve = true;
+		}
+
+	}
+
+
 #endif
 #endif
 
@@ -265,15 +315,14 @@ int rechercher_nom(Repertoire *rep, char nom[], int ind)
   /*********************************************************************/
   /* Supprimer tous les caracteres non numériques de la chaine        */
   /*********************************************************************/
-void compact(char *s)
-{
-	// compléter code 
+void compact(char *s){
 
-	for (int i = 0; i < strlen(s); i++) {
+	for (unsigned int i = 0; i < strlen(s); i++) {
 		if ((s[i] < 48) || (s[i] > 57)) {
-			for (int j=i; j < strlen(s); j++) {
+			for (unsigned int j=i; j < strlen(s); j++) {
 				s[j - 1] = s[i];			
 			}
+			free(&s[i]);
 
 		}
 	}
@@ -289,12 +338,35 @@ void compact(char *s)
 int sauvegarder(Repertoire *rep, char nom_fichier[])
 {
 	FILE *fic_rep;					/* le fichier */
+	errno_t err = fopen_s(&fic_rep, nom_fichier, "w");
 #ifdef IMPL_TAB
-	// ajouter code ici pour tableau
+
+	if (fic_rep == NULL) {
+
+	}
+	for (int i = 0; i < rep->nb_elts; i++) {
+
+		fputs(rep->tab[i].nom, fic_rep);
+		fputs("		", fic_rep);
+		fputs(rep->tab[i].prenom, fic_rep);
+		fputs("		", fic_rep);
+		fputs(rep->tab[i].tel, fic_rep);
+		fputs("\n", fic_rep);
+	}
+	
 	
 #else
 #ifdef IMPL_LIST
 	// ajouter code ici pour Liste
+	for (int i = 0; i < rep->nb_elts; i++) {
+		
+		fputs(GetElementAt(rep->liste,i)->pers.nom, fic_rep);
+		fputs("		", fic_rep);
+		fputs(GetElementAt(rep->liste, i)->pers.prenom, fic_rep);
+		fputs("		", fic_rep);
+		fputs(GetElementAt(rep->liste, i)->pers.tel, fic_rep);
+		fputs("\n", fic_rep);
+	}
 #endif
 #endif
 
