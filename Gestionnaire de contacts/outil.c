@@ -43,8 +43,8 @@ int ajouter_un_contact_dans_rep(Repertoire* rep, Enregistrement enr)
 
 	bool inserted = false;
 	if (rep->nb_elts == 0) {
-		InsertElementAt(rep->liste, rep->liste->size, enr);
-		if (InsertElementAt(rep->liste, rep->liste->size, enr) != 0) {
+		InsertElementAt(rep->liste, 0, enr);
+		if (InsertElementAt(rep->liste, rep->liste->size, enr) ==1) {
 			rep->nb_elts += 1;
 			modif = true;
 			rep->est_trie = true;
@@ -56,19 +56,29 @@ int ajouter_un_contact_dans_rep(Repertoire* rep, Enregistrement enr)
 		if (rep->nb_elts < MAX_ENREG) {
 			int i = 0;
 			// on regarde à quel indice (i) l'élément qu'on veut ajouter n'est plus inférieur aux autres, pour le placer au bon endroit
+
+		/*	SingleLinkedListElem* elem = GetElementAt(rep->liste, 0);
+			while ((elem != NULL) && (est_sup(elem->pers, enr) == true)) {
+				i++;
+				elem = elem->next;
+			}*/
+			
 			for (int j = 0; j < rep->nb_elts; j++) {
-				SingleLinkedListElem* elem = GetElementAt(rep->liste, i);					
+				SingleLinkedListElem* elem = GetElementAt(rep->liste, j);					
 				
-				while (est_sup(elem->pers, enr)) {
+				if (est_sup(elem->pers, enr)) {
 					i++;
 				}
 			}
+
+			InsertElementAt(rep->liste, i, enr);
 			int ret = InsertElementAt(rep->liste, i, enr);
 			if (ret == 1) {
 				rep->liste->size += 1;
 				return(OK);
 			}
 			
+			else { return(ERROR); }
 		}
 
 	}
@@ -136,7 +146,7 @@ void supprimer_un_contact_dans_rep(Repertoire *rep, int indice) {
   /**********************************************************************/
 void affichage_enreg(Enregistrement enr)
 {
-	printf("\n%s,	%s			%s", enr.nom, enr.prenom, enr.tel);
+	printf("\n%s, %s			%s", enr.nom, enr.prenom, enr.tel);
 
 
 } /* fin affichage_enreg */
@@ -145,11 +155,34 @@ void affichage_enreg(Enregistrement enr)
   /* pour les listes                                                    */
   /* ex | Dupont                |Jean                  |0320304050      */
   /**********************************************************************/
-void affichage_enreg_frmt(Enregistrement enr)
-{
+void affichage_enreg_frmt(Enregistrement enr) {
 
-	printf("\n%s,	%s			%s", enr.nom, enr.prenom, enr.tel);
-	// code à compléter ici
+	int lettres_nom = strlen(enr.nom);
+	int lettres_prenom = strlen(enr.prenom);
+	int num_tel = strlen(enr.tel);
+
+	printf("\n|%s", enr.nom);
+	if (lettres_nom < MAX_NOM) {
+		for (int i = lettres_nom; i<= MAX_NOM; i++) {
+			printf(" ");
+		}
+	}
+
+	printf("|%s", enr.prenom);
+	if (lettres_prenom < MAX_NOM) {
+		for (int j = lettres_prenom; j <= MAX_NOM; j++) {
+			printf(" ");
+		}
+	}
+
+	printf("|%s", enr.tel);
+	if (num_tel < MAX_TEL) {
+		for (int j = lettres_prenom; j <= MAX_TEL; j++) {
+			printf(" ");
+		}
+	}
+		
+			
 	// comme fonction affichage_enreg, mais avec présentation alignées des infos
 	
 
@@ -164,16 +197,16 @@ bool est_sup(Enregistrement enr1, Enregistrement enr2)
 {
 	
 	unsigned int k = 0;
-
+	
 	// on met tous les noms et prénoms en majuscules 
 
 	for(k=0; k<strlen(enr1.nom); k++){
 		toupper(enr1.nom[k]);
-		
+
 	}
 
 	for (k = 0; k < strlen(enr1.prenom); k++) {
-		toupper(enr1.nom[k]);
+		toupper(enr1.prenom[k]);
 		
 	}
 
@@ -183,7 +216,7 @@ bool est_sup(Enregistrement enr1, Enregistrement enr2)
 	}
 
 	for (k = 0; k < strlen(enr2.prenom); k++) {
-		toupper(enr1.nom[k]);
+		toupper(enr2.prenom[k]);
 		
 	}
 
@@ -212,7 +245,6 @@ bool est_sup(Enregistrement enr1, Enregistrement enr2)
 	}
 	
 	else{
-
 		return(false);
 	}
 }
@@ -282,7 +314,7 @@ int rechercher_nom(Repertoire* rep, char nom[], int ind)
 	while ((i <= ind_fin) && (!trouve))
 	{
 		strncpy_s(tmp_nom2, _countof(tmp_nom2), rep->tab[i].nom, _TRUNCATE);
-		compact(tmp_nom2);
+		
 		if (strcmp(tmp_nom, tmp_nom2) == 0)
 			trouve = true;
 		else
@@ -295,16 +327,17 @@ int rechercher_nom(Repertoire* rep, char nom[], int ind)
 
 #else
 #ifdef IMPL_LIST
-							// ajouter code ici pour Liste
-	for(int k =0; k<= ind_fin;k++){
-		SingleLinkedListElem* elem= GetElementAt(rep->liste, k);
+	// ajouter code ici pour Liste
+	for(int i =0; i<= ind_fin;i++){
+
+		SingleLinkedListElem* elem= GetElementAt(rep->liste, i);
 		int ret = strcmp(elem->pers.nom, nom);
 		if (ret == 0) {
 			trouve = true;
 		}
 
 	}
-
+	
 
 #endif
 #endif
@@ -322,7 +355,7 @@ void compact(char *s){
 			for (unsigned int j=i; j < strlen(s); j++) {
 				s[j - 1] = s[i];			
 			}
-			free(&s[i]);
+			free(&s[strlen(s)-1]);
 
 		}
 	}
@@ -423,10 +456,24 @@ int charger(Repertoire *rep, char nom_fichier[])
 #else
 #ifdef IMPL_LIST
 														// ajouter code implemention liste
-#endif
-#endif
+#endif			
+#endif			
 
+				// /*on ouvre le fichier pour le lire */
+				//FILE *fp = fopen_s("file.txt", "r");
+				//if (fp == NULL) {
+				//	return(-1);		//si on n'a pas réussi à l'ouvrir
+				//}
 
+				//char str[MAX_NOM];
+				//SingleLinkedListElem* var = rep->liste->head;
+				//
+				//while(var->next != NULL){
+
+				//	fgets(str, MAX_NOM, fp) != NULL);
+				//	
+				/*}
+				fclose(fp);*/
 
 
 			}

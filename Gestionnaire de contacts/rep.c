@@ -51,7 +51,7 @@ char mess2[] = "\nPlus d'autre %s dans le répertoire\n";
 
 void main(int argc, char *argv[])
 {
-
+	
 	char choix;						/* caractère de l'option choisie dans menu utilisateur */
 
 	Repertoire repertoire;			/* variable qui déclare et crée le répertoire en mémoire */

@@ -4,8 +4,8 @@
 #include <locale.h>
 #include "liste.h"
 
-// #define VERSION 3.0
-// #define SQUELET
+#define VERSION 3.0
+#define SQUELET
 
 
 // crée une nouvelle liste chainée unilataire vide et renvoie un pointeur sur cette liste
@@ -92,10 +92,10 @@ int InsertElementAt(LinkedList *Liste, int i, Enregistrement pers) {
 			NewElement = NewLinkedListElement(pers);
 			if (NewElement != NULL) {
 
-				SingleLinkedListElem* Queue = GetElementAt(Liste, Liste->size);
-				Queue->next = NewElement;
+				SingleLinkedListElem* Queue = GetElementAt(Liste, Liste->size-1);
+				Queue->next = &NewElement;
 				Liste->tail = NewElement;
-		
+				return(1);
 			}
 			else {
 				return(0);
