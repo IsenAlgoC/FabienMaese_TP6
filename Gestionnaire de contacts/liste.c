@@ -95,6 +95,7 @@ int InsertElementAt(LinkedList *Liste, int i, Enregistrement pers) {
 				SingleLinkedListElem* Queue = GetElementAt(Liste, Liste->size-1);
 				Queue->next = &NewElement;
 				Liste->tail = NewElement;
+				Liste->size++;
 				return(1);
 			}
 			else {
@@ -120,30 +121,33 @@ int DeleteLinkedListElem(LinkedList* list, SingleLinkedListElem* item) {
 			SingleLinkedListElem* nouvelle_tete = list->head->next;
 			free(list->head);
 			list->head = nouvelle_tete;
-		}
-
-
-		int indice = 0;	//indice qui va correspondre à celui de l'élément qu'on veut libérer
-		for (int i = 0; i < list->size; i++) {
-			SingleLinkedListElem* Current = GetElementAt(list, i);
-			if (item == Current) {
-				SingleLinkedListElem* ElementPrec = GetElementAt(list, i - 1);
-				SingleLinkedListElem* ElementSuiv = GetElementAt(list, i + 1);
-				ElementPrec->next = ElementSuiv;
-
-			}
-			indice += 1;
-		}
-
-		if (GetElementAt(list, indice) == NULL) {
-			free(GetElementAt(list, indice));	//libération de mémoire
-			list->size--;
+			list->size--; 
 			return(1);
 		}
-		else { 
-			return(0);  //pas trouvé
-		}
 
+		else {
+			int indice = 0;	//indice qui va correspondre à celui de l'élément qu'on veut libérer
+			for (int i = 0; i < list->size; i++) {
+				SingleLinkedListElem* Current = GetElementAt(list, i);
+				if (item == Current) {
+					SingleLinkedListElem* ElementPrec = GetElementAt(list, i - 1);
+					SingleLinkedListElem* ElementSuiv = GetElementAt(list, i + 1);
+					ElementPrec->next = ElementSuiv;
+					break;
+				}
+				indice += 1;
+			}
+
+			if (GetElementAt(list, indice) == NULL) {
+				return(0);  //pas trouvé
+			}
+			else {
+				free(GetElementAt(list, indice));	//libération de mémoire
+				list->size--;
+				return(1);
+
+			}
+		}
 	}
 
 	

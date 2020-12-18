@@ -54,15 +54,13 @@ int ajouter_un_contact_dans_rep(Repertoire* rep, Enregistrement enr)
 	}
 	else {
 		if (rep->nb_elts < MAX_ENREG) {
+
+			if (rep->nb_elts == 0) {
+				InsertElementAt(rep->liste, 0, enr);
+			}
 			int i = 0;
 			// on regarde à quel indice (i) l'élément qu'on veut ajouter n'est plus inférieur aux autres, pour le placer au bon endroit
 
-		/*	SingleLinkedListElem* elem = GetElementAt(rep->liste, 0);
-			while ((elem != NULL) && (est_sup(elem->pers, enr) == true)) {
-				i++;
-				elem = elem->next;
-			}*/
-			
 			for (int j = 0; j < rep->nb_elts; j++) {
 				SingleLinkedListElem* elem = GetElementAt(rep->liste, j);					
 				
@@ -74,8 +72,8 @@ int ajouter_un_contact_dans_rep(Repertoire* rep, Enregistrement enr)
 			InsertElementAt(rep->liste, i, enr);
 			int ret = InsertElementAt(rep->liste, i, enr);
 			if (ret == 1) {
-				rep->liste->size += 1;
 				rep->nb_elts = rep->nb_elts + 1;
+				rep->est_trie = true;
 				return(OK);
 			}
 			

@@ -285,7 +285,7 @@ void affichage_repertoire(Repertoire *rep)
 		if (cpt > 0)						/* S'il reste des lignes à afficher */
 		{								/* dans la page */
 #ifdef IMPL_TAB
-			affichage_enreg_frmt(rep->tab[idx]);	/* Affichage enrg courant */
+			affichage_enreg(rep->tab[idx]);	/* Affichage enrg courant */
 
 #else
 #ifdef IMPL_LIST
