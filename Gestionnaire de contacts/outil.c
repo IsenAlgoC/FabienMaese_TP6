@@ -455,25 +455,22 @@ int charger(Repertoire *rep, char nom_fichier[])
 				}
 #else
 #ifdef IMPL_LIST
-														// ajouter code implemention liste
+				// On s'inspire fortement de la partie tableaux déjà rédigée 
+				SingleLinkedListElem temp;
+				if (lire_champ_suivant(buffer, &idx, temp.pers.nom, MAX_NOM, SEPARATEUR) == OK)
+				{
+					idx++;							/* on saute le separateur */
+					if (lire_champ_suivant(buffer, &idx, temp.pers.prenom, MAX_NOM, SEPARATEUR) == OK)
+					{
+						idx++;
+						if (lire_champ_suivant(buffer, &idx, temp.pers.tel, MAX_TEL, SEPARATEUR) == OK) {
+							InsertElementAt(rep->liste, num_rec, temp.pers);
+							num_rec++;		/* element à priori correct, on le comptabilise */
+						}
+					}
+				}								
 #endif			
 #endif			
-
-				// /*on ouvre le fichier pour le lire */
-				//FILE *fp = fopen_s("file.txt", "r");
-				//if (fp == NULL) {
-				//	return(-1);		//si on n'a pas réussi à l'ouvrir
-				//}
-
-				//char str[MAX_NOM];
-				//SingleLinkedListElem* var = rep->liste->head;
-				//
-				//while(var->next != NULL){
-
-				//	fgets(str, MAX_NOM, fp) != NULL);
-				//	
-				/*}
-				fclose(fp);*/
 
 
 			}
