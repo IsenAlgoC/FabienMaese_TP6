@@ -75,6 +75,7 @@ int ajouter_un_contact_dans_rep(Repertoire* rep, Enregistrement enr)
 			int ret = InsertElementAt(rep->liste, i, enr);
 			if (ret == 1) {
 				rep->liste->size += 1;
+				rep->nb_elts = rep->nb_elts + 1;
 				return(OK);
 			}
 			

@@ -109,30 +109,43 @@ int InsertElementAt(LinkedList *Liste, int i, Enregistrement pers) {
 // Suppression d'un élément de la liste chaînée
 //
 // 
-int DeleteLinkedListElem(LinkedList * list, SingleLinkedListElem * item) {
+int DeleteLinkedListElem(LinkedList* list, SingleLinkedListElem* item) {
 	if (list == NULL) return(0); // La liste n'existe pas
 	if ((list->head == NULL) || (list->tail == NULL)) return(0); // liste vide ou anomalie
 	if ((list->head == list->tail) && (list->size != 1)) return(0); // anomalie
 	if ((list->size == 0) || (item == NULL)) return(0); // pas d'élément dans la liste ou item invalide
 
 	else {
+		if (list->head == item) {		// dans le cas où on veut enlever la tête 
+			SingleLinkedListElem* nouvelle_tete = list->head->next;
+			free(list->head);
+			list->head = nouvelle_tete;
+		}
 
+
+		int indice = 0;	//indice qui va correspondre à celui de l'élément qu'on veut libérer
 		for (int i = 0; i < list->size; i++) {
 			SingleLinkedListElem* Current = GetElementAt(list, i);
 			if (item == Current) {
 				SingleLinkedListElem* ElementPrec = GetElementAt(list, i - 1);
 				SingleLinkedListElem* ElementSuiv = GetElementAt(list, i + 1);
 				ElementPrec->next = ElementSuiv;
-				
-			}
-		}
-		
 
-		free(item);
-		list->size--;
-		return(1);
+			}
+			indice += 1;
+		}
+
+		if (GetElementAt(list, indice) == NULL) {
+			free(GetElementAt(list, indice));	//libération de mémoire
+			list->size--;
+			return(1);
+		}
+		else { 
+			return(0);  //pas trouvé
+		}
+
 	}
 
-	return(0);  // pas trouvé
+	
 }
 
